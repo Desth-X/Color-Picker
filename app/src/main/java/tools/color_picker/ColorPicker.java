@@ -44,7 +44,7 @@ public class ColorPicker extends View implements View.OnTouchListener {
 
     private void createArea(){
         Bitmap bitmap = Bitmap.createBitmap(intSquareBorderSize, intSquareBorderSize, Bitmap.Config.ARGB_8888);
-
+        /*
         for (int i = 0; i < intSquareBorderSize; i++) {
             double yFact = (255/(double) intSquareBorderSize);
             double sR = 255;
@@ -68,7 +68,7 @@ public class ColorPicker extends View implements View.OnTouchListener {
         }
         Rect rect = new Rect(0,0,intSquareBorderSize, intSquareBorderSize);
         Rect rectPos = new Rect(intSpacing,intSpacing, intSpacing + intSquareBorderSize, intSpacing + intSquareBorderSize);
-        canvas.drawBitmap(bitmap, rect, rectPos, paint);
+        canvas.drawBitmap(bitmap, rect, rectPos, paint);*/
 
     }
 
