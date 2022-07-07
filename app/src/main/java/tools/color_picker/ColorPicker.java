@@ -73,59 +73,30 @@ public class ColorPicker extends View implements View.OnTouchListener {
     }
 
     private void createBar(){
-        double r = 255;
-        double g = 0;
-        double b = 0;
-        boolean rMaxed = true;
-        boolean gMaxed = false;
-        boolean bMaxed = false;
         int lMargin = 2 * intSpacing + intSquareBorderSize;
         barRect = new Rect(lMargin, intSpacing, lMargin + 70, intSpacing + intSquareBorderSize);
-        for (int i = intSquareBorderSize; i > 0; i--) {
-            int intColorCount = 6 * 255;
-            double val = intColorCount / (double) intSquareBorderSize;
-            Log.d(TAG, "createBar: " + val);
-            if(rMaxed && !gMaxed && !bMaxed){
-                g += val;
-                if(g >= 255){
-                    g = 255;
-                    gMaxed = true;
-                }
-            } else if (rMaxed && gMaxed){
-                r -= val;
-                if(r <= 0){
-                    r = 0;
-                    rMaxed = false;
-                }
-            } else if(gMaxed && !bMaxed){
-                b += val;
-                if(b >= 255){
-                    b = 255;
-                    bMaxed = true;
-                }
-            } else if(gMaxed && bMaxed){
-                g -= val;
-                if(g <= 0){
-                    g = 0;
-                    gMaxed = false;
-                }
-            } else if(bMaxed && !rMaxed){
-                r += val;
-                if(r >= 255){
-                    r = 255;
-                    rMaxed = true;
-                }
-            } else if(bMaxed && rMaxed){
-                b -= val;
-                if(b <= 0){
-                    b = 0;
-                    bMaxed = false;
-                }
-            }
-            //Log.d("APPMSG:", r + " " + g + " " + b);
-            paint.setColor(Color.rgb((int) r,(int) g, (int)b));
+        for (int i = 0; i < intSquareBorderSize; i++) {
+            int index = (int) Math.round((255*6)*i/(double)intSquareBorderSize);
+            paint.setColor(getColorAt(index));
             canvas.drawRect(barRect.left, barRect.top + i, barRect.right, barRect.top + i+1, paint);
         }
+    }
+
+    private int getColorAt(int index){
+        if(index <= 255){
+            return Color.rgb(255, 0, index);
+        } else if (index <= 510){
+            return Color.rgb(255 - (index - 255), 0, 255);
+        } else if(index <= 765){
+            return Color.rgb(0, index  - 510, 255);
+        } else if(index <= 1020){
+            return Color.rgb(0, 255, 255 - (index - 1020));
+        } else if(index <= 1275){
+            return Color.rgb(index - 1020, 255, 0);
+        } else if(index <= 1530){
+            return Color.rgb(255, 255 - (index - 1275), 0);
+        }
+        return Color.rgb(0,0,0);
     }
 
     @Override
@@ -133,7 +104,13 @@ public class ColorPicker extends View implements View.OnTouchListener {
         float x = motionEvent.getX();
         float y = motionEvent.getY();
         if(x >= barRect.left && x <= barRect.right && y >= barRect.top && y <= barRect.bottom){
-            Log.d(TAG, "onTouch: here we go");
+            int i = (int) y - barRect.top;
+            int index = (int) Math.round((255*6)*i/(double)intSquareBorderSize);
+            int color = getColorAt(index);
+            int r = Color.red(color);
+            int g = Color.green(color);
+            int b = Color.blue(color);
+            Log.d(TAG, "onTouch: " + r + " "+ g + " " + b );
         }
         return false;
     }
