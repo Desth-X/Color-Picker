@@ -44,32 +44,17 @@ public class ColorPicker extends View implements View.OnTouchListener {
 
     private void createArea(){
         Bitmap bitmap = Bitmap.createBitmap(intSquareBorderSize, intSquareBorderSize, Bitmap.Config.ARGB_8888);
-        /*
+        int r = 255;
+        int g = 255;
+        int b = 255;
         for (int i = 0; i < intSquareBorderSize; i++) {
-            double yFact = (255/(double) intSquareBorderSize);
-            double sR = 255;
-            double sG = 127;
-            double sB = 0  ;
-            double r = 255  ;
-            double g = 255 ;
-            double b = 255;
-            double dR = r - sR;
-            double dG = g - sG;
-            double dB = b - sB;
-            double vR = dR / intSquareBorderSize;
-            double vG = dG / intSquareBorderSize;
-            double vB = dB / intSquareBorderSize;
             for( int j = 0; j < intSquareBorderSize; j++){
-                r = dR * (r-vR*j)/ (double) intSquareBorderSize; //255 - (int) Math.round(255.0  *  j / intSquareBorderSize);
-                g = dG * (g-vG*j)/ (double) intSquareBorderSize;
-                b = dB * (b-vB*j)/ (double) intSquareBorderSize;
-                bitmap.setPixel(j, i, Color.rgb((int) r, (int) g, (int)b));
+                bitmap.setPixel(j, i, Color.rgb(r,g,b));
             }
         }
         Rect rect = new Rect(0,0,intSquareBorderSize, intSquareBorderSize);
         Rect rectPos = new Rect(intSpacing,intSpacing, intSpacing + intSquareBorderSize, intSpacing + intSquareBorderSize);
-        canvas.drawBitmap(bitmap, rect, rectPos, paint);*/
-
+        canvas.drawBitmap(bitmap, rect, rectPos, paint);
     }
 
     private void createBar(){
