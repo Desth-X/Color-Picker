@@ -1,5 +1,6 @@
 package tools.color_picker;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -21,11 +22,14 @@ public class ColorPicker extends View implements View.OnTouchListener {
     Canvas canvas;
     Paint paint;
     Rect barRect;
+    int selectedColor;
 
     public ColorPicker(Context context) {
         super(context);
+        selectedColor = Color.RED;
     }
 
+    @SuppressLint("DrawAllocation")
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
@@ -44,27 +48,31 @@ public class ColorPicker extends View implements View.OnTouchListener {
 
     private void createArea(){
         Bitmap bitmap = Bitmap.createBitmap(intSquareBorderSize, intSquareBorderSize, Bitmap.Config.ARGB_8888);
-        int r = 255;
-        int g = 255;
-        int b = 255;
         for (int i = 0; i < intSquareBorderSize; i++) {
             for( int j = 0; j < intSquareBorderSize; j++){
-                bitmap.setPixel(j, i, Color.rgb(r,g,b));
+                bitmap.setPixel(j, i, getAreaColorAt(j, i));
             }
         }
         Rect rect = new Rect(0,0,intSquareBorderSize, intSquareBorderSize);
         Rect rectPos = new Rect(intSpacing,intSpacing, intSpacing + intSquareBorderSize, intSpacing + intSquareBorderSize);
         canvas.drawBitmap(bitmap, rect, rectPos, paint);
+        Log.d(TAG, "createArea: AREA CREATED");
     }
 
     private void createBar(){
         int lMargin = 2 * intSpacing + intSquareBorderSize;
-        barRect = new Rect(lMargin, intSpacing, lMargin + 70, intSpacing + intSquareBorderSize);
+        barRect = new Rect(lMargin, intSpacing, lMargin + intBarWidth, intSpacing + intSquareBorderSize);
+        Bitmap bitmap = Bitmap.createBitmap(intBarWidth, intSquareBorderSize, Bitmap.Config.ARGB_8888);
         for (int i = 0; i < intSquareBorderSize; i++) {
             int index = (int) Math.round((255*6)*i/(double)intSquareBorderSize);
-            paint.setColor(getColorAt(index));
-            canvas.drawRect(barRect.left, barRect.top + i, barRect.right, barRect.top + i+1, paint);
+            for (int j = 0; j < intBarWidth; j++) {
+                bitmap.setPixel(j, i, getColorAt(index));
+            }
+
+            //paint.setColor(getColorAt(index));
+            //canvas.drawRect(barRect.left, barRect.top + i, barRect.right, barRect.top + i+1, paint);
         }
+        canvas.drawBitmap(bitmap, new Rect(0,0,intBarWidth,intSquareBorderSize), barRect, paint);
     }
 
     private int getColorAt(int index){
@@ -84,6 +92,21 @@ public class ColorPicker extends View implements View.OnTouchListener {
         return Color.rgb(0,0,0);
     }
 
+    private int getAreaColorAt(int x, int y){
+        double yVal = Math.round((255*y/(double)intSquareBorderSize));
+        double fact = (255.0 - yVal) / 255.0;
+        int dR = 255 - Color.red(selectedColor);
+        int dG = 255 - Color.green(selectedColor);
+        int dB = 255 - Color.blue(selectedColor);
+        int r = 255 - (dR * x / intSquareBorderSize);
+        int g = 255 - (dG * x / intSquareBorderSize);
+        int b = 255 - (dB * x / intSquareBorderSize);
+        r = (int) Math.round(r * fact);
+        g = (int) Math.round(g * fact);
+        b = (int) Math.round(b * fact);
+        return Color.rgb(r,g,b);
+    }
+
     @Override
     public boolean onTouch(View view, MotionEvent motionEvent) {
         float x = motionEvent.getX();
@@ -96,6 +119,8 @@ public class ColorPicker extends View implements View.OnTouchListener {
             int g = Color.green(color);
             int b = Color.blue(color);
             Log.d(TAG, "onTouch: " + r + " "+ g + " " + b );
+            selectedColor = color;
+            invalidate();
         }
         return false;
     }
